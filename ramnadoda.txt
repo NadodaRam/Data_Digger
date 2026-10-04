@@ -1,0 +1,313 @@
+mysql> INSERT INTO customer (customerID, Name, Email, Address)
+    -> VALUES
+    -> (1, 'Smith', 'Smith@Gmail.com', '123 Main Street'),
+    -> (2, 'Johnson', 'Johnson@Gmail.com', '45 Park Road'),
+    -> (3, 'Bravo', 'Bravo@Gmail.com', '78 King Street'),
+    -> (4, 'David', 'David@Gmail.com', '12 Queen Avenue'),
+    -> (5, 'Watson', 'Watson@Gmail.com', '90 High Street');
+Query OK, 5 rows affected (0.03 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+
+mysql> SELECT * FROM customer;
++------------+---------+-------------------+-----------------+
+| customerID | Name    | Email             | Address         |
++------------+---------+-------------------+-----------------+
+|          1 | Smith   | Smith@Gmail.com   | 123 Main Street |
+|          2 | Johnson | Johnson@Gmail.com | 45 Park Road    |
+|          3 | Bravo   | Bravo@Gmail.com   | 78 King Street  |
+|          4 | David   | David@Gmail.com   | 12 Queen Avenue |
+|          5 | Watson  | Watson@Gmail.com  | 90 High Street  |
++------------+---------+-------------------+-----------------+
+
+
+
+mysql> update customer  set address = "101, kingsbury avenue" where customerID = 1;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT * FROM customer;
++------------+---------+-------------------+-----------------------+
+| customerID | Name    | Email             | Address               |
++------------+---------+-------------------+-----------------------+
+|          1 | Smith   | Smith@Gmail.com   | 101, kingsbury avenue |
+|          2 | Johnson | Johnson@Gmail.com | 45 Park Road          |
+|          3 | Bravo   | Bravo@Gmail.com   | 78 King Street        |
+|          4 | David   | David@Gmail.com   | 12 Queen Avenue       |
+|          5 | Watson  | Watson@Gmail.com  | 90 High Street        |
++------------+---------+-------------------+-----------------------+
+
+
+mysql> DELETE FROM customer where customerID = 5;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM customer;
++------------+---------+-------------------+-----------------------+
+| customerID | Name    | Email             | Address               |
++------------+---------+-------------------+-----------------------+
+|          1 | Smith   | Smith@Gmail.com   | 101, kingsbury avenue |
+|          2 | Johnson | Johnson@Gmail.com | 45 Park Road          |
+|          3 | Bravo   | Bravo@Gmail.com   | 78 King Street        |
+|          4 | David   | David@Gmail.com   | 12 Queen Avenue       |
++------------+---------+-------------------+-----------------------+
+
+
+mysql> select * from customer where Name = "Smith";
++------------+-------+-----------------+-----------------------+
+| customerID | Name  | Email           | Address               |
++------------+-------+-----------------+-----------------------+
+|          1 | Smith | Smith@Gmail.com | 101, kingsbury avenue |
++------------+-------+-----------------+-----------------------+
+
+
+
+
+mysql> INSERT INTO orders (OrderID, CustomerID, OrderDate, TotalAmount)
+    -> VALUES
+    -> (1, 1, '2026-01-10', '500'),
+    -> (2, 2, '2026-01-15', '750'),
+    -> (3, 3, '2026-02-05', '1200'),
+    -> (4, 4, '2026-02-20', '450'),
+    -> (5, 5, '2026-03-01', '900');
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM orders;
++---------+------------+------------+-------------+
+| OrderID | CustomerID | OrderDate  | TotalAmount |
++---------+------------+------------+-------------+
+|       1 |          1 | 2026-01-10 | 500         |
+|       2 |          2 | 2026-01-15 | 750         |
+|       3 |          3 | 2026-02-05 | 1200        |
+|       4 |          4 | 2026-02-20 | 450         |
+|       5 |          5 | 2026-03-01 | 900         |
++---------+------------+------------+-------------+
+
+
+mysql> select * from orders where CustomerID = 3;
++---------+------------+------------+-------------+
+| OrderID | CustomerID | OrderDate  | TotalAmount |
++---------+------------+------------+-------------+
+|       3 |          3 | 2026-02-05 | 1200        |
++---------+------------+------------+-------------+
+
+mysql> update orders set TotalAmount ="5000" where OrderID = 1;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from orders;
++---------+------------+------------+-------------+
+| OrderID | CustomerID | OrderDate  | TotalAmount |
++---------+------------+------------+-------------+
+|       1 |          1 | 2026-01-10 | 5000        |
+|       2 |          2 | 2026-01-15 | 750         |
+|       3 |          3 | 2026-02-05 | 1200        |
+|       4 |          4 | 2026-02-20 | 450         |
+|       5 |          5 | 2026-03-01 | 900         |
++---------+------------+------------+-------------+
+
+mysql> delete from orders where OrderID = 4;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from orders;
++---------+------------+------------+-------------+
+| OrderID | CustomerID | OrderDate  | TotalAmount |
++---------+------------+------------+-------------+
+|       1 |          1 | 2026-01-10 | 5000        |
+|       2 |          2 | 2026-01-15 | 750         |
+|       3 |          3 | 2026-02-05 | 1200        |
+|       5 |          5 | 2026-03-01 | 900         |
++---------+------------+------------+-------------+
+
+
+mysql> SELECT OrderID, CustomerID, OrderDate, TotalAmount
+    -> FROM orders
+    -> WHERE OrderDate >= CURDATE() - INTERVAL 8 MONTH;
++---------+------------+------------+-------------+
+| OrderID | CustomerID | OrderDate  | TotalAmount |
++---------+------------+------------+-------------+
+|       3 |          3 | 2026-02-05 | 1200        |
+|       5 |          5 | 2026-03-01 | 900         |
++---------+------------+------------+-------------+
+
+
+mysql> select max(TotalAmount) from orders;
++------------------+
+| max(TotalAmount) |
++------------------+
+| 900              |
++------------------+
+1 row in set (0.01 sec)
+
+
+mysql> select min(TotalAmount) from orders;
++------------------+
+| min(TotalAmount) |
++------------------+
+| 1200             |
++------------------+
+1 row in set (0.00 sec)
+
+
+mysql> select avg(TotalAmount) from orders;
++------------------+
+| avg(TotalAmount) |
++------------------+
+|           1962.5 |
++------------------+
+1 row in set (0.00 sec)
+
+
+mysql> INSERT INTO products (ProductID, ProductName, Price, Stock)
+    -> VALUES
+    -> (1, 'Laptop', 75000, '10'),
+    -> (2, 'Mobile Phone', 30000, '25'),
+    -> (3, 'Keyboard', 1500, '50'),
+    -> (4, 'Mouse', 800, '40'),
+    -> (5, 'Headphones', 2500, '30');
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM products;
++-----------+--------------+-------+-------+
+| ProductID | ProductName  | Price | Stock |
++-----------+--------------+-------+-------+
+|         1 | Laptop       | 75000 | 10    |
+|         2 | Mobile Phone | 30000 | 25    |
+|         3 | Keyboard     |  1500 | 50    |
+|         4 | Mouse        |   800 | 40    |
+|         5 | Headphones   |  2500 | 30    |
++-----------+--------------+-------+-------+
+5 rows in set (0.00 sec)
+
+mysql> select * from products order by price desc;
++-----------+--------------+-------+-------+
+| ProductID | ProductName  | Price | Stock |
++-----------+--------------+-------+-------+
+|         1 | Laptop       | 75000 | 10    |
+|         2 | Mobile Phone | 30000 | 25    |
+|         5 | Headphones   |  2500 | 30    |
+|         3 | Keyboard     |  1500 | 50    |
+|         4 | Mouse        |   800 | 40    |
++-----------+--------------+-------+-------+
+5 rows in set (0.00 sec)
+
+mysql> update products set price = 2500 where ProductName = "Headphone";
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 0  Changed: 0  Warnings: 0
+
+mysql> SELECT * FROM products;
++-----------+--------------+-------+-------+
+| ProductID | ProductName  | Price | Stock |
++-----------+--------------+-------+-------+
+|         1 | Laptop       | 75000 | 10    |
+|         2 | Mobile Phone | 30000 | 25    |
+|         3 | Keyboard     |  1500 | 50    |
+|         4 | Mouse        |   800 | 40    |
+|         5 | Headphones   |  2500 | 30    |
++-----------+--------------+-------+-------+
+
+
+mysql> delete from Products where Stock = 10 ;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM products;
++-----------+--------------+-------+-------+
+| ProductID | ProductName  | Price | Stock |
++-----------+--------------+-------+-------+
+|         2 | Mobile Phone | 30000 | 25    |
+|         3 | Keyboard     |  1500 | 50    |
+|         4 | Mouse        |   800 | 40    |
+|         5 | Headphones   |  2500 | 30    |
++-----------+--------------+-------+-------+
+4 rows in set (0.00 sec)
+
+mysql> select * from products where Price between 500 and 2500;
++-----------+-------------+-------+-------+
+| ProductID | ProductName | Price | Stock |
++-----------+-------------+-------+-------+
+|         3 | Keyboard    |  1500 | 50    |
+|         4 | Mouse       |   800 | 40    |
+|         5 | Headphones  |  2500 | 30    |
++-----------+-------------+-------+-------+
+
+
+mysql> SELECT ProductName, Price
+    -> FROM products
+    -> WHERE Price = (SELECT MAX(Price) FROM products);
++--------------+-------+
+| ProductName  | Price |
++--------------+-------+
+| Mobile Phone | 30000 |
++--------------+-------+
+
+mysql> SELECT ProductName, Price
+    -> FROM products
+    -> WHERE Price = (SELECT MIN(Price) FROM products);
++-------------+-------+
+| ProductName | Price |
++-------------+-------+
+| Mouse       |   800 |
++-------------+-------+
+
+mysql> INSERT INTO orderdetails (OrderDetailID, OrderID, ProductID, Quantity, SubTotal)
+    -> VALUES
+    -> (1, 1, 1, 2, 150000),
+    -> (2, 2, 2, 1, 30000),
+    -> (3, 3, 3, 3, 4500),
+    -> (4, 4, 4, 2, 1600),
+    -> (5, 5, 5, 1, 2500);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM orderdetails;
++---------------+---------+-----------+----------+----------+
+| OrderDetailID | OrderID | ProductID | Quantity | SubTotal |
++---------------+---------+-----------+----------+----------+
+|             1 |       1 |         1 |        2 |   150000 |
+|             2 |       2 |         2 |        1 |    30000 |
+|             3 |       3 |         3 |        3 |     4500 |
+|             4 |       4 |         4 |        2 |     1600 |
+|             5 |       5 |         5 |        1 |     2500 |
++---------------+---------+-----------+----------+----------+
+
+mysql> select * from orderdetails where OrderID = 2;
++---------------+---------+-----------+----------+----------+
+| OrderDetailID | OrderID | ProductID | Quantity | SubTotal |
++---------------+---------+-----------+----------+----------+
+|             2 |       2 |         2 |        1 |    30000 |
++---------------+---------+-----------+----------+----------+
+
+mysql> SELECT SUM(SubTotal) AS Total_Revenue
+    -> FROM orderdetails;
++---------------+
+| Total_Revenue |
++---------------+
+|        188600 |
++---------------+
+
+mysql> SELECT p.ProductName, SUM(od.Quantity) AS Total_Ordered
+    -> FROM orderdetails od
+    -> JOIN products p
+    -> ON od.ProductID = p.ProductID
+    -> GROUP BY p.ProductID, p.ProductName
+    -> ORDER BY Total_Ordered DESC
+    -> LIMIT 3;
++--------------+---------------+
+| ProductName  | Total_Ordered |
++--------------+---------------+
+| Keyboard     |             3 |
+| Mouse        |             2 |
+| Mobile Phone |             1 |
++--------------+---------------+
+
+
+mysql> select count(*) as Times_Sold
+    -> from orderdetails
+    -> where ProductID = 1;
++------------+
+| Times_Sold |
++------------+
+|          1 |
++------------+
+1 row in set (0.00 sec)
