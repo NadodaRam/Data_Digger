@@ -1,0 +1,337 @@
+mysql> CREATE DATABASE UNIVERSITY_COURSE_MANAGEMENT_SYSTEM;
+
+mysql> USE UNIVERSITY_COURSE_MANAGEMENT_SYSTEM;
+Database changed
+
+mysql> CREATE TABLE student (
+    ->     studentId INT PRIMARY KEY ,
+    ->     firstname VARCHAR(50) ,
+    ->     lastname VARCHAR(50) ,
+    ->     email VARCHAR(100) UNIQUE,
+    ->     birthdate DATE,
+    ->     enrollmentdate DATE
+    -> );
+
+mysql> CREATE TABLE courses (
+    ->     courseID INT PRIMARY KEY AUTO_INCREMENT,
+    ->     coursename VARCHAR(100) ,
+    ->     departmentID INT,
+    ->     credits INT
+    -> );
+
+mysql> CREATE TABLE Instructors (
+    ->     InstructorsID INT PRIMARY KEY AUTO_INCREMENT,
+    ->     firstname VARCHAR(50) NOT NULL,
+    ->     lastname VARCHAR(50) NOT NULL,
+    ->     email VARCHAR(100) UNIQUE,
+    ->     departentID INT
+    -> );
+
+mysql> CREATE TABLE enrollments (
+    ->     enrolmentID INT PRIMARY KEY AUTO_INCREMENT,
+    ->     studentID INT,
+    ->     courseID INT,
+    ->     enrollmentDate DATE,
+    ->     FOREIGN KEY (studentID) REFERENCES student(studentId),
+    ->     FOREIGN KEY (courseID) REFERENCES courses(coursesid)
+    -> );
+
+mysql> CREATE TABLE departments (
+    ->     departmentID INT PRIMARY KEY AUTO_INCREMENT,
+    ->     departmentNAME VARCHAR(100) NOT NULL
+    -> );
+
+mysql> SHOW TABLES;
++-----------------------------------------------+
+| Tables_in_university_course_management_system |
++-----------------------------------------------+
+| courses                                       |
+| departments                                   |
+| enrollments                                   |
+| instructors                                   |
+| student                                       |
++-----------------------------------------------+
+5 rows in set (0.01 sec)
+
+mysql> SELECT * FROM departments;
++--------------+-------------------------+
+| departmentID | departmentNAME          |
++--------------+-------------------------+
+|            1 | Computer Science        |
+|            2 | Information Technology  |
+|            3 | Business Administration |
+|            4 | Mathematics             |
+|            5 | Electronics             |
++--------------+-------------------------+
+
+mysql> SELECT * FROM student;
++-----------+-----------+----------+-------------------+------------+----------------+
+| studentId | firstname | lastname | email             | birthdate  | enrollmentdate |
++-----------+-----------+----------+-------------------+------------+----------------+
+|         1 | John      | Smith    | john@gmail.com    | 2003-05-12 | 2024-08-01     |
+|         2 | Emma      | Johnson  | emma@gmail.com    | 2004-02-20 | 2024-08-02     |
+|         3 | David     | Brown    | david@gmail.com   | 2003-11-15 | 2024-08-03     |
+|         4 | Sophia    | Wilson   | sophia@gmail.com  | 2004-07-08 | 2024-08-04     |
+|         5 | Michael   | Davis    | michael@gmail.com | 2003-09-25 | 2024-08-05     |
++-----------+-----------+----------+-------------------+------------+----------------+
+
+mysql> SELECT * FROM courses;
++----------+---------------------+--------------+---------+
+| courseID | coursename          | departmentID | credits |
++----------+---------------------+--------------+---------+
+|        1 | Database Management |            1 |       4 |
+|        2 | Web Development     |            2 |       3 |
+|        3 | Business Management |            3 |       3 |
+|        4 | Applied Mathematics |            4 |       4 |
+|        5 | Digital Electronics |            5 |       3 |
++----------+---------------------+--------------+---------+
+
+mysql> SELECT * FROM Instructors;
++---------------+-----------+----------+-------------------+-------------+
+| InstructorsID | firstname | lastname | email             | departentID |
++---------------+-----------+----------+-------------------+-------------+
+|             1 | Robert    | Taylor   | robert@gmail.com  |           1 |
+|             2 | Olivia    | Martin   | olivia@gmail.com  |           2 |
+|             3 | William   | Anderson | william@gmail.com |           3 |
+|             4 | Ava       | Thomas   | ava@gmail.com     |           4 |
+|             5 | James     | Jackson  | james@gmail.com   |           5 |
++---------------+-----------+----------+-------------------+-------------+
+
+mysql> SELECT * FROM enrollments;
++-------------+-----------+----------+----------------+
+| enrolmentID | studentID | courseID | enrollmentDate |
++-------------+-----------+----------+----------------+
+|           1 |         1 |        1 | 2024-08-10     |
+|           2 |         2 |        2 | 2024-08-11     |
+|           3 |         3 |        3 | 2024-08-12     |
+|           4 |         4 |        4 | 2024-08-13     |
+|           5 |         5 |        5 | 2024-08-14     |
++-------------+-----------+----------+----------------+
+
+mysql> INSERT INTO student
+    -> (studentId, firstname, lastname, email, birthdate, enrollmentdate)
+    -> VALUES (6, 'Rahul', 'Sharma', 'rahul@gmail.com', '2004-05-10', '2025-08-01');
+
+mysql> UPDATE student
+    -> SET firstname = 'Rohan'
+    -> WHERE studentId = 6;
+
+mysql> DELETE FROM student
+    -> WHERE studentId = 6;
+
+mysql> SELECT *
+    -> FROM student
+    -> WHERE enrollmentdate >= '2023-01-01';
++-----------+-----------+----------+-------------------+------------+----------------+
+| studentId | firstname | lastname | email             | birthdate  | enrollmentdate |
++-----------+-----------+----------+-------------------+------------+----------------+
+|         1 | John      | Smith    | john@gmail.com    | 2003-05-12 | 2024-08-01     |
+|         2 | Emma      | Johnson  | emma@gmail.com    | 2004-02-20 | 2024-08-02     |
+|         3 | David     | Brown    | david@gmail.com   | 2003-11-15 | 2024-08-03     |
+|         4 | Sophia    | Wilson   | sophia@gmail.com  | 2004-07-08 | 2024-08-04     |
+|         5 | Michael   | Davis    | michael@gmail.com | 2003-09-25 | 2024-08-05     |
++-----------+-----------+----------+-------------------+------------+----------------+
+
+mysql> SELECT c.*
+    -> FROM courses c
+    -> JOIN departments d
+    ->     ON c.departmentID = d.departmentID
+    -> WHERE d.departmentNAME = 'Mathematics'
+    -> LIMIT 5;
++----------+---------------------+--------------+---------+
+| courseID | coursename          | departmentID | credits |
++----------+---------------------+--------------+---------+
+|        4 | Applied Mathematics |            4 |       4 |
++----------+---------------------+--------------+---------+
+
+mysql> SELECT c.courseID,
+    ->        c.coursename,
+    ->        COUNT(e.studentID) AS total_students
+    -> FROM courses c
+    -> JOIN enrollments e
+    ->     ON c.courseID = e.courseID
+    -> GROUP BY c.courseID, c.coursename
+    -> HAVING COUNT(e.studentID) > 5;
+Empty set (0.01 sec)
+
+mysql> SELECT DISTINCT s.studentId,
+    ->        s.firstname,
+    ->        s.lastname
+    -> FROM student s
+    -> JOIN enrollments e
+    ->     ON s.studentId = e.studentID
+    -> JOIN courses c
+    ->     ON e.courseID = c.courseID
+    -> WHERE c.coursename IN ('Database Management', 'Web Development');
++-----------+-----------+----------+
+| studentId | firstname | lastname |
++-----------+-----------+----------+
+|         1 | John      | Smith    |
+|         2 | Emma      | Johnson  |
++-----------+-----------+----------+
+
+mysql> SELECT AVG(credits) AS average_credits
+    -> FROM courses;
++-----------------+
+| average_credits |
++-----------------+
+|          3.4000 |
++-----------------+
+
+mysql> ALTER TABLE Instructors
+    -> ADD COLUMN salary DECIMAL(10,2);
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> SELECT MAX(i.salary) AS maximum_salary
+    -> FROM Instructors i
+    -> JOIN departments d
+    ->     ON i.departentID = d.departmentID
+    -> WHERE d.departmentNAME = 'Computer Science';
++----------------+
+| maximum_salary |
++----------------+
+|           NULL |
++----------------+
+
+mysql> SELECT d.departmentID,
+    ->        d.departmentNAME,
+    ->        COUNT(DISTINCT e.studentID) AS total_students
+    -> FROM departments d
+    -> LEFT JOIN courses c
+    ->     ON d.departmentID = c.departmentID
+    -> LEFT JOIN enrollments e
+    ->     ON c.courseID = e.courseID
+    -> GROUP BY d.departmentID, d.departmentNAME;
++--------------+-------------------------+----------------+
+| departmentID | departmentNAME          | total_students |
++--------------+-------------------------+----------------+
+|            1 | Computer Science        |              1 |
+|            2 | Information Technology  |              1 |
+|            3 | Business Administration |              1 |
+|            4 | Mathematics             |              1 |
+|            5 | Electronics             |              1 |
++--------------+-------------------------+----------------+
+
+mysql> SELECT s.studentId,
+    ->        s.firstname,
+    ->        s.lastname,
+    ->        c.coursename
+    -> FROM student s
+    -> INNER JOIN enrollments e
+    ->     ON s.studentId = e.studentID
+    -> INNER JOIN courses c
+    ->     ON e.courseID = c.courseID;
++-----------+-----------+----------+---------------------+
+| studentId | firstname | lastname | coursename          |
++-----------+-----------+----------+---------------------+
+|         1 | John      | Smith    | Database Management |
+|         2 | Emma      | Johnson  | Web Development     |
+|         3 | David     | Brown    | Business Management |
+|         4 | Sophia    | Wilson   | Applied Mathematics |
+|         5 | Michael   | Davis    | Digital Electronics |
++-----------+-----------+----------+---------------------+
+
+mysql> SELECT s.studentId,
+    ->        s.firstname,
+    ->        s.lastname,
+    ->        c.coursename
+    -> FROM student s
+    -> LEFT JOIN enrollments e
+    ->     ON s.studentId = e.studentID
+    -> LEFT JOIN courses c
+    ->     ON e.courseID = c.courseID;
++-----------+-----------+----------+---------------------+
+| studentId | firstname | lastname | coursename          |
++-----------+-----------+----------+---------------------+
+|         1 | John      | Smith    | Database Management |
+|         2 | Emma      | Johnson  | Web Development     |
+|         3 | David     | Brown    | Business Management |
+|         4 | Sophia    | Wilson   | Applied Mathematics |
+|         5 | Michael   | Davis    | Digital Electronics |
++-----------+-----------+----------+---------------------+
+
+mysql> SELECT DISTINCT s.studentId,
+    ->        s.firstname,
+    ->        s.lastname
+    -> FROM student s
+    -> WHERE s.studentId IN (
+    ->     SELECT e.studentID
+    ->     FROM enrollments e
+    ->     WHERE e.courseID IN (
+    ->         SELECT courseID
+    ->         FROM enrollments
+    ->         GROUP BY courseID
+    ->         HAVING COUNT(studentID) > 4
+    ->     )
+    -> );
+Empty set (0.01 sec)
+
+mysql> SELECT studentId,
+    ->        firstname,
+    ->        lastname,
+    ->        YEAR(enrollmentdate) AS enrollment_year
+    -> FROM student;
++-----------+-----------+----------+-----------------+
+| studentId | firstname | lastname | enrollment_year |
++-----------+-----------+----------+-----------------+
+|         1 | John      | Smith    |            2024 |
+|         2 | Emma      | Johnson  |            2024 |
+|         3 | David     | Brown    |            2024 |
+|         4 | Sophia    | Wilson   |            2024 |
+|         5 | Michael   | Davis    |            2024 |
++-----------+-----------+----------+-----------------+
+
+mysql> SELECT InstructorsID,
+    ->        CONCAT(firstname, ' ', lastname) AS instructor_name
+    -> FROM Instructors;
++---------------+------------------+
+| InstructorsID | instructor_name  |
++---------------+------------------+
+|             1 | Robert Taylor    |
+|             2 | Olivia Martin    |
+|             3 | William Anderson |
+|             4 | Ava Thomas       |
+|             5 | James Jackson    |
++---------------+------------------+
+
+mysql> SELECT enrolmentID,
+    ->        studentID,
+    ->        courseID,
+    ->        enrollmentDate,
+    ->        COUNT(*) OVER (
+    ->            ORDER BY enrollmentDate, enrolmentID
+    ->        ) AS running_total
+    -> FROM enrollments;
++-------------+-----------+----------+----------------+---------------+
+| enrolmentID | studentID | courseID | enrollmentDate | running_total |
++-------------+-----------+----------+----------------+---------------+
+|           1 |         1 |        1 | 2024-08-10     |             1 |
+|           2 |         2 |        2 | 2024-08-11     |             2 |
+|           3 |         3 |        3 | 2024-08-12     |             3 |
+|           4 |         4 |        4 | 2024-08-13     |             4 |
+|           5 |         5 |        5 | 2024-08-14     |             5 |
++-------------+-----------+----------+----------------+---------------+
+
+mysql> SELECT studentId,
+    ->        firstname,
+    ->        lastname,
+    ->        enrollmentdate,
+    ->        CASE
+    ->            WHEN enrollmentdate < DATE_SUB(CURDATE(), INTERVAL 4 YEAR)
+    ->                THEN 'Senior'
+    ->            ELSE 'Junior'
+    ->        END AS student_category
+    -> FROM student;
++-----------+-----------+----------+----------------+------------------+
+| studentId | firstname | lastname | enrollmentdate | student_category |
++-----------+-----------+----------+----------------+------------------+
+|         1 | John      | Smith    | 2024-08-01     | Junior           |
+|         2 | Emma      | Johnson  | 2024-08-02     | Junior           |
+|         3 | David     | Brown    | 2024-08-03     | Junior           |
+|         4 | Sophia    | Wilson   | 2024-08-04     | Junior           |
+|         5 | Michael   | Davis    | 2024-08-05     | Junior           |
++-----------+-----------+----------+----------------+------------------+
+
+
+
