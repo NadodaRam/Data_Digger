@@ -1,0 +1,612 @@
+mysql> create database hospital_management_system;
+Query OK, 1 row affected (0.10 sec)
+
+mysql> use hospital_management_system;
+Database changed
+
+mysql> CREATE TABLE Patient (
+    ->     Patients_id INT PRIMARY KEY,
+    ->     Name VARCHAR(100) NOT NULL,
+    ->     DOB DATE,
+    ->     Gender VARCHAR(10),
+    ->     Phone_number VARCHAR(15),
+    ->     Email VARCHAR(100),
+    ->     Address VARCHAR(255),
+    ->     Registration_date DATE
+    -> );
+
+mysql> CREATE TABLE Doctors (
+    ->     Doctor_ID INT PRIMARY KEY,
+    ->     Name VARCHAR(100) NOT NULL,
+    ->     Specialization VARCHAR(100),
+    ->     Phone_number VARCHAR(15),
+    ->     Email VARCHAR(100),
+    ->     Available_day VARCHAR(50),
+    ->     Consultation_fee DECIMAL(10,2)
+    -> );
+
+mysql> CREATE TABLE Appointments (
+    ->     Appointment_id INT PRIMARY KEY,
+    ->     Patient_id INT,
+    ->     Doctor_ID INT,
+    ->     Appointment_date DATE,
+    ->     Status VARCHAR(20),
+    ->
+    ->     FOREIGN KEY (Patient_id)
+    ->         REFERENCES Patient(Patients_id),
+    ->
+    ->     FOREIGN KEY (Doctor_ID)
+    ->         REFERENCES Doctors(Doctor_ID)
+    -> );
+
+mysql> CREATE TABLE Medical_Records (
+    ->     Medical_ID INT PRIMARY KEY,
+    ->     Patient_ID INT,
+    ->     Doctor_ID INT,
+    ->     Diagnosis VARCHAR(255),
+    ->     Prescription VARCHAR(255),
+    ->     Treatment_date DATE,
+    ->
+    ->     FOREIGN KEY (Patient_ID)
+    ->         REFERENCES patient(Patients_id),
+    ->
+    ->     FOREIGN KEY (Doctor_ID)
+    ->         REFERENCES Doctors(Doctor_ID)
+    -> );
+
+mysql> CREATE TABLE Billing (
+    ->     Invoice_ID INT PRIMARY KEY,
+    ->     Patient_ID INT,
+    ->     Appointment_ID INT,
+    ->     Amount DECIMAL(10,2),
+    ->     Payment_Status VARCHAR(20),
+    ->     Payment_Date DATE,
+    ->
+    ->     FOREIGN KEY (Patient_ID)
+    ->         REFERENCES patient(Patients_id),
+    ->
+    ->     FOREIGN KEY (Appointment_ID)
+    ->         REFERENCES Appointments(Appointment_id)
+    -> );
+
+mysql> CREATE TABLE Department (
+    ->     Department_ID INT PRIMARY KEY,
+    ->     Department_Name VARCHAR(100) NOT NULL
+    -> );
+
+mysql> CREATE TABLE Doctor_Department (
+    ->     Doctor_ID INT,
+    ->     Department_ID INT,
+    ->
+    ->     PRIMARY KEY (Doctor_ID, Department_ID),
+    ->
+    ->     FOREIGN KEY (Doctor_ID)
+    ->         REFERENCES Doctors(Doctor_ID),
+    ->
+    ->     FOREIGN KEY (Department_ID)
+    ->         REFERENCES Department(Department_ID)
+    -> );
+
+mysql> show tables;
++--------------------------------------+
+| Tables_in_hospital_management_system |
++--------------------------------------+
+| appointments                         |
+| billing                              |
+| department                           |
+| doctor_department                    |
+| doctors                              |
+| medical_records                      |
+| patient                              |
++--------------------------------------+
+
+mysql> INSERT INTO patient
+    -> (Patients_id, Name, DOB, Gender, Phone_number, Email, Address, Registration_date)
+    -> VALUES
+    -> (1, 'Rahul Sharma', '2000-05-15', 'Male', '9876543210', 'rahul@gmail.com', 'London', '2026-10-01'),
+    -> (2, 'Priya Singh', '1998-08-22', 'Female', '9876543211', 'priya@gmail.com', 'Manchester', '2026-10-02'),
+    -> (3, 'Amit Kumar', '1995-03-10', 'Male', '9876543212', 'amit@gmail.com', 'Birmingham', '2026-10-03'),
+    -> (4, 'Sneha Patel', '2001-11-05', 'Female', '9876543213', 'sneha@gmail.com', 'Leeds', '2026-10-04'),
+    -> (5, 'Arjun Verma', '1990-07-18', 'Male', '9876543214', 'arjun@gmail.com', 'Liverpool', '2026-10-05');
+
+mysql> INSERT INTO Doctors
+    -> (Doctor_ID, Name, Specialization, Phone_number, Email, Available_day, Consultation_fee)
+    -> VALUES
+    -> (1, 'Dr. Raj Mehta', 'Cardiology', '9123456780', 'raj@gmail.com', 'Monday', 500.00),
+    -> (2, 'Dr. Anjali Rao', 'Dermatology', '9123456781', 'anjali@gmail.com', 'Tuesday', 700.00),
+    -> (3, 'Dr. Vikram Shah', 'Neurology', '9123456782', 'vikram@gmail.com', 'Wednesday', 800.00),
+    -> (4, 'Dr. Neha Gupta', 'Pediatrics', '9123456783', 'neha@gmail.com', 'Thursday', 600.00),
+    -> (5, 'Dr. Karan Joshi', 'Orthopedics', '9123456784', 'karan@gmail.com', 'Friday', 750.00);
+
+mysql> INSERT INTO Department (Department_ID, Department_Name)
+    -> VALUES
+    -> (1, 'Cardiology'),
+    -> (2, 'Dermatology'),
+    -> (3, 'Neurology'),
+    -> (4, 'Pediatrics'),
+    -> (5, 'Orthopedics');
+
+mysql> INSERT INTO Doctor_Department (Doctor_ID, Department_ID)
+    -> VALUES
+    -> (1, 1),
+    -> (2, 2),
+    -> (3, 3),
+    -> (4, 4),
+    -> (5, 5);
+
+mysql> INSERT INTO Appointments
+    -> (Appointment_id, Patient_id, Doctor_ID, Appointment_date, Status)
+    -> VALUES
+    -> (1, 1, 1, '2026-10-20', 'Scheduled'),
+    -> (2, 2, 2, '2026-10-21', 'Completed'),
+    -> (3, 3, 3, '2026-10-22', 'Scheduled'),
+    -> (4, 4, 4, '2026-10-23', 'Cancelled'),
+    -> (5, 5, 5, '2026-10-24', 'Completed');
+
+mysql> INSERT INTO Medical_Records
+    -> (Medical_ID, Patient_ID, Doctor_ID, Diagnosis, Prescription, Treatment_date)
+    -> VALUES
+    -> (1, 1, 1, 'High Blood Pressure', 'Amlodipine 5mg', '2026-10-10'),
+    -> (2, 2, 2, 'Skin Allergy', 'Antihistamine', '2026-10-11'),
+    -> (3, 3, 3, 'Migraine', 'Prescribed migraine medication', '2026-10-12'),
+    -> (4, 4, 4, 'Seasonal Allergy', 'Antihistamine', '2026-10-13'),
+    -> (5, 5, 5, 'Knee Pain', 'Pain relief medication', '2026-10-14');
+
+mysql> INSERT INTO Billing
+    -> (Invoice_ID, Patient_ID, Appointment_ID, Amount, Payment_Status, Payment_Date)
+    -> VALUES
+    -> (1, 1, 1, 500.00, 'Pending', NULL),
+    -> (2, 2, 2, 700.00, 'Paid', '2026-10-10'),
+    -> (3, 3, 3, 800.00, 'Pending', NULL),
+    -> (4, 4, 4, 600.00, 'Failed', '2026-10-13'),
+    -> (5, 5, 5, 750.00, 'Paid', '2026-10-14');
+
+mysql> INSERT INTO patient
+    -> (Patients_id, Name, DOB, Gender, Phone_number, Email, Address, Registration_date)
+    -> VALUES
+    -> (6, 'Rohan Malhotra', '1999-04-12', 'Male',
+    ->  '9876543215', 'rohan@gmail.com', 'London',
+    ->  '2026-10-14');
+
+mysql> INSERT INTO Doctors
+    -> (Doctor_ID, Name, Specialization, Phone_number, Email, Available_day, Consultation_fee)
+    -> VALUES
+    -> (6, 'Dr. Meera Kapoor', 'Cardiology', '9123456785',
+    ->  'meera@gmail.com', 'Monday, Friday', 650.00);
+
+mysql> INSERT INTO Appointments
+    -> (Appointment_id, Patient_id, Doctor_ID, Appointment_date, Status)
+    -> VALUES
+    -> (6, 6, 6, '2026-10-25', 'Scheduled');
+
+mysql> UPDATE Patient
+    -> SET Address = 'Birmingham'
+    -> WHERE Patients_id = 3;
+
+mysql> DELETE FROM Appointments
+    -> WHERE Status = 'Cancelled'
+    ->   AND Appointment_date < DATE_SUB(CURDATE(), INTERVAL 6 MONTH);
+
+mysql> SELECT *
+    -> FROM Patient
+    -> WHERE Registration_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)
+    ->   AND Registration_date <= CURDATE();
++-------------+----------------+------------+--------+--------------+-----------------+------------+-------------------+
+| Patients_id | Name           | DOB        | Gender | Phone_number | Email           | Address    | Registration_date |
++-------------+----------------+------------+--------+--------------+-----------------+------------+-------------------+
+|           1 | Rahul Sharma   | 2000-05-15 | Male   | 9876543210   | rahul@gmail.com | London     | 2026-10-01        |
+|           2 | Priya Singh    | 1998-08-22 | Female | 9876543211   | priya@gmail.com | Manchester | 2026-10-02        |
+|           3 | Amit Kumar     | 1995-03-10 | Male   | 9876543212   | amit@gmail.com  | Birmingham | 2026-10-03        |
+|           4 | Sneha Patel    | 2001-11-05 | Female | 9876543213   | sneha@gmail.com | Leeds      | 2026-10-04        |
+|           5 | Arjun Verma    | 1990-07-18 | Male   | 9876543214   | arjun@gmail.com | Liverpool  | 2026-10-05        |
+|           6 | Rohan Malhotra | 1999-04-12 | Male   | 9876543215   | rohan@gmail.com | London     | 2026-10-14        |
++-------------+----------------+------------+--------+--------------+-----------------+------------+-------------------+
+
+mysql> SELECT
+    ->     p.Patients_id,
+    ->     p.Name,
+    ->     SUM(b.Amount) AS Total_Paid
+    -> FROM patient p
+    -> JOIN Billing b
+    ->     ON p.Patients_id = b.Patient_ID
+    -> WHERE b.Payment_Status = 'Paid'
+    -> GROUP BY p.Patients_id, p.Name
+    -> ORDER BY Total_Paid DESC
+    -> LIMIT 5;
++-------------+-------------+------------+
+| Patients_id | Name        | Total_Paid |
++-------------+-------------+------------+
+|           5 | Arjun Verma |     750.00 |
+|           2 | Priya Singh |     700.00 |
++-------------+-------------+------------+
+
+mysql> SELECT *
+    -> FROM Doctors
+    -> WHERE Consultation_fee > 600;
++-----------+------------------+----------------+--------------+------------------+----------------+------------------+
+| Doctor_ID | Name             | Specialization | Phone_number | Email            | Available_day  | Consultation_fee |
++-----------+------------------+----------------+--------------+------------------+----------------+------------------+
+|         2 | Dr. Anjali Rao   | Dermatology    | 9123456781   | anjali@gmail.com | Tuesday        |           700.00 |
+|         3 | Dr. Vikram Shah  | Neurology      | 9123456782   | vikram@gmail.com | Wednesday      |           800.00 |
+|         5 | Dr. Karan Joshi  | Orthopedics    | 9123456784   | karan@gmail.com  | Friday         |           750.00 |
+|         6 | Dr. Meera Kapoor | Cardiology     | 9123456785   | meera@gmail.com  | Monday, Friday |           650.00 |
++-----------+------------------+----------------+--------------+------------------+----------------+------------------+
+
+mysql> SELECT *
+    -> FROM appointments
+    -> WHERE status = 'Scheduled'
+    ->   AND doctor_id = 3;
++----------------+------------+-----------+------------------+-----------+
+| Appointment_id | Patient_id | Doctor_ID | Appointment_date | Status    |
++----------------+------------+-----------+------------------+-----------+
+|              3 |          3 |         3 | 2026-10-22       | Scheduled |
++----------------+------------+-----------+------------------+-----------+
+
+mysql> SELECT *
+    -> FROM doctors
+    -> WHERE specialization = 'Cardiology'
+    ->    OR specialization = 'Neurology';
++-----------+------------------+----------------+--------------+------------------+----------------+------------------+
+| Doctor_ID | Name             | Specialization | Phone_number | Email            | Available_day  | Consultation_fee |
++-----------+------------------+----------------+--------------+------------------+----------------+------------------+
+|         1 | Dr. Raj Mehta    | Cardiology     | 9123456780   | raj@gmail.com    | Monday         |           500.00 |
+|         3 | Dr. Vikram Shah  | Neurology      | 9123456782   | vikram@gmail.com | Wednesday      |           800.00 |
+|         6 | Dr. Meera Kapoor | Cardiology     | 9123456785   | meera@gmail.com  | Monday, Friday |           650.00 |
++-----------+------------------+----------------+--------------+------------------+----------------+------------------+
+
+mysql> SELECT p.*
+    -> FROM patient p
+    -> WHERE NOT EXISTS (
+    ->     SELECT 1
+    ->     FROM appointments a
+    ->     WHERE a.Patient_id = p.Patients_id
+    ->       AND a.Appointment_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)
+    -> );
+Empty set (0.00 sec)
+
+mysql> SELECT *
+    -> FROM doctors
+    -> ORDER BY specialization ASC;
++-----------+------------------+----------------+--------------+------------------+----------------+------------------+
+| Doctor_ID | Name             | Specialization | Phone_number | Email            | Available_day  | Consultation_fee |
++-----------+------------------+----------------+--------------+------------------+----------------+------------------+
+|         1 | Dr. Raj Mehta    | Cardiology     | 9123456780   | raj@gmail.com    | Monday         |           500.00 |
+|         6 | Dr. Meera Kapoor | Cardiology     | 9123456785   | meera@gmail.com  | Monday, Friday |           650.00 |
+|         2 | Dr. Anjali Rao   | Dermatology    | 9123456781   | anjali@gmail.com | Tuesday        |           700.00 |
+|         3 | Dr. Vikram Shah  | Neurology      | 9123456782   | vikram@gmail.com | Wednesday      |           800.00 |
+|         5 | Dr. Karan Joshi  | Orthopedics    | 9123456784   | karan@gmail.com  | Friday         |           750.00 |
+|         4 | Dr. Neha Gupta   | Pediatrics     | 9123456783   | neha@gmail.com   | Thursday       |           600.00 |
++-----------+------------------+----------------+--------------+------------------+----------------+------------------+
+
+mysql> SELECT doctor_id, COUNT(DISTINCT patient_id) AS total_patients
+    -> FROM appointments
+    -> GROUP BY doctor_id;
++-----------+----------------+
+| doctor_id | total_patients |
++-----------+----------------+
+|         1 |              1 |
+|         2 |              1 |
+|         3 |              1 |
+|         4 |              1 |
+|         5 |              1 |
+|         6 |              1 |
++-----------+----------------+
+
+mysql> SELECT SUM(amount) AS total_revenue
+    -> FROM billing;
++---------------+
+| total_revenue |
++---------------+
+|       3350.00 |
++---------------+
+
+mysql> SELECT d.doctor_id,
+    ->        d.name,
+    ->        COUNT(a.appointment_id) AS total_visits
+    -> FROM doctors d
+    -> JOIN appointments a
+    ->     ON d.doctor_id = a.doctor_id
+    -> GROUP BY d.doctor_id, d.name
+    -> ORDER BY total_visits DESC
+    -> LIMIT 1;
++-----------+---------------+--------------+
+| doctor_id | name          | total_visits |
++-----------+---------------+--------------+
+|         1 | Dr. Raj Mehta |            1 |
++-----------+---------------+--------------+
+
+mysql> SELECT AVG(consultation_fee) AS average_consultation_fee
+    -> FROM doctors;
++--------------------------+
+| average_consultation_fee |
++--------------------------+
+|               666.666667 |
++--------------------------+
+
+mysql> ALTER TABLE medical_records
+    -> ADD CONSTRAINT fk_records_patient
+    -> FOREIGN KEY (Patient_ID)
+    -> REFERENCES patient(Patients_id);
+
+mysql> ALTER TABLE medical_records
+    -> ADD CONSTRAINT fk_records_doctor
+    -> FOREIGN KEY (Doctor_ID)
+    -> REFERENCES doctors(Doctor_ID);
+
+mysql> ALTER TABLE billing
+    -> ADD CONSTRAINT fk_billing_appointment
+    -> FOREIGN KEY (Appointment_ID)
+    -> REFERENCES appointments(Appointment_id);
+
+mysql> SELECT doc.Doctor_ID,
+    ->        doc.Name AS Doctor_Name,
+    ->        dep.Department_Name
+    -> FROM doctors doc
+    -> INNER JOIN doctor_department dd
+    ->     ON doc.Doctor_ID = dd.Doctor_ID
+    -> INNER JOIN department dep
+    ->     ON dd.Department_ID = dep.Department_ID;
++-----------+-----------------+-----------------+
+| Doctor_ID | Doctor_Name     | Department_Name |
++-----------+-----------------+-----------------+
+|         1 | Dr. Raj Mehta   | Cardiology      |
+|         2 | Dr. Anjali Rao  | Dermatology     |
+|         3 | Dr. Vikram Shah | Neurology       |
+|         4 | Dr. Neha Gupta  | Pediatrics      |
+|         5 | Dr. Karan Joshi | Orthopedics     |
++-----------+-----------------+-----------------+
+
+mysql> SELECT DISTINCT p.*
+    -> FROM patient p
+    -> LEFT JOIN appointments a
+    ->     ON p.Patients_id = a.Patient_id
+    -> WHERE a.Status = 'Completed';
++-------------+-------------+------------+--------+--------------+-----------------+------------+-------------------+
+| Patients_id | Name        | DOB        | Gender | Phone_number | Email           | Address    | Registration_date |
++-------------+-------------+------------+--------+--------------+-----------------+------------+-------------------+
+|           2 | Priya Singh | 1998-08-22 | Female | 9876543211   | priya@gmail.com | Manchester | 2026-10-02        |
+|           5 | Arjun Verma | 1990-07-18 | Male   | 9876543214   | arjun@gmail.com | Liverpool  | 2026-10-05        |
++-------------+-------------+------------+--------+--------------+-----------------+------------+-------------------+
+
+mysql> SELECT a.*
+    -> FROM billing b
+    -> RIGHT JOIN appointments a
+    ->     ON b.Appointment_ID = a.Appointment_id
+    -> WHERE b.Invoice_ID IS NULL;
++----------------+------------+-----------+------------------+-----------+
+| Appointment_id | Patient_id | Doctor_ID | Appointment_date | Status    |
++----------------+------------+-----------+------------------+-----------+
+|              6 |          6 |         6 | 2026-10-25       | Scheduled |
++----------------+------------+-----------+------------------+-----------+
+
+mysql> SELECT *
+    -> FROM doctors
+    -> WHERE Doctor_ID IN (
+    ->     SELECT Doctor_ID
+    ->     FROM appointments
+    ->     GROUP BY Doctor_ID
+    ->     HAVING COUNT(DISTINCT Patient_id) > 50
+    -> );
+
+mysql> SELECT p.Patients_id,
+    ->        p.Name,
+    ->        SUM(b.Amount) AS Total_Spent
+    -> FROM patient p
+    -> JOIN billing b
+    ->     ON p.Patients_id = b.Patient_ID
+    -> GROUP BY p.Patients_id, p.Name
+    -> HAVING SUM(b.Amount) = (
+    ->     SELECT MAX(total_amount)
+    ->     FROM (
+    ->         SELECT SUM(Amount) AS total_amount
+    ->         FROM billing
+    ->         GROUP BY Patient_ID
+    ->     ) AS patient_totals
+    -> );
++-------------+------------+-------------+
+| Patients_id | Name       | Total_Spent |
++-------------+------------+-------------+
+|           3 | Amit Kumar |      800.00 |
++-------------+------------+-------------+
+
+mysql> SELECT *
+    -> FROM appointments
+    -> WHERE Doctor_ID IN (
+    ->     SELECT Doctor_ID
+    ->     FROM doctors
+    ->     WHERE Specialization = 'Dermatology'
+    -> );
++----------------+------------+-----------+------------------+-----------+
+| Appointment_id | Patient_id | Doctor_ID | Appointment_date | Status    |
++----------------+------------+-----------+------------------+-----------+
+|              2 |          2 |         2 | 2026-10-21       | Completed |
++----------------+------------+-----------+------------------+-----------+
+
+mysql> SELECT YEAR(Appointment_date) AS Visit_Year,
+    ->        MONTH(Appointment_date) AS Visit_Month,
+    ->        COUNT(*) AS Total_Visits
+    -> FROM appointments
+    -> GROUP BY YEAR(Appointment_date),
+    ->          MONTH(Appointment_date)
+    -> ORDER BY Visit_Year, Visit_Month;
++------------+-------------+--------------+
+| Visit_Year | Visit_Month | Total_Visits |
++------------+-------------+--------------+
+|       2026 |          10 |            6 |
++------------+-------------+--------------+
+
+mysql> SELECT DATEDIFF(discharge_date, admission_date) AS Stay_Duration_Days
+    -> FROM medical_records;
+
+mysql> SELECT DATE_FORMAT(treatment_date, '%d-%m-%Y') AS Formatted_Date
+    -> FROM medical_records;
++----------------+
+| Formatted_Date |
++----------------+
+| 10-10-2026     |
+| 11-10-2026     |
+| 12-10-2026     |
+| 13-10-2026     |
+| 14-10-2026     |
++----------------+
+
+mysql> SELECT Patients_id,
+    ->        UPPER(Name) AS Patient_Name
+    -> FROM patient;
++-------------+----------------+
+| Patients_id | Patient_Name   |
++-------------+----------------+
+|           1 | RAHUL SHARMA   |
+|           2 | PRIYA SINGH    |
+|           3 | AMIT KUMAR     |
+|           4 | SNEHA PATEL    |
+|           5 | ARJUN VERMA    |
+|           6 | ROHAN MALHOTRA |
++-------------+----------------+
+
+mysql> SELECT Doctor_ID,
+    ->        TRIM(Name) AS Doctor_Name
+    -> FROM doctors;
++-----------+------------------+
+| Doctor_ID | Doctor_Name      |
++-----------+------------------+
+|         1 | Dr. Raj Mehta    |
+|         2 | Dr. Anjali Rao   |
+|         3 | Dr. Vikram Shah  |
+|         4 | Dr. Neha Gupta   |
+|         5 | Dr. Karan Joshi  |
+|         6 | Dr. Meera Kapoor |
++-----------+------------------+
+
+mysql> SELECT Doctor_ID,
+    ->        Name,
+    ->        COALESCE(NULLIF(TRIM(Phone_number), ''), 'Not Available')
+    ->            AS Phone_Number
+    -> FROM doctors;
++-----------+------------------+--------------+
+| Doctor_ID | Name             | Phone_Number |
++-----------+------------------+--------------+
+|         1 | Dr. Raj Mehta    | 9123456780   |
+|         2 | Dr. Anjali Rao   | 9123456781   |
+|         3 | Dr. Vikram Shah  | 9123456782   |
+|         4 | Dr. Neha Gupta   | 9123456783   |
+|         5 | Dr. Karan Joshi  | 9123456784   |
+|         6 | Dr. Meera Kapoor | 9123456785   |
++-----------+------------------+--------------+
+
+mysql> SELECT
+    ->     d.Doctor_ID,
+    ->     d.Name AS Doctor_Name,
+    ->     COUNT(DISTINCT a.Patient_id) AS Total_Patients,
+    ->     RANK() OVER (
+    ->         ORDER BY COUNT(DISTINCT a.Patient_id) DESC
+    ->     ) AS Doctor_Rank
+    -> FROM doctors d
+    -> LEFT JOIN appointments a
+    ->     ON d.Doctor_ID = a.Doctor_ID
+    -> GROUP BY d.Doctor_ID, d.Name;
++-----------+------------------+----------------+-------------+
+| Doctor_ID | Doctor_Name      | Total_Patients | Doctor_Rank |
++-----------+------------------+----------------+-------------+
+|         1 | Dr. Raj Mehta    |              1 |           1 |
+|         2 | Dr. Anjali Rao   |              1 |           1 |
+|         3 | Dr. Vikram Shah  |              1 |           1 |
+|         4 | Dr. Neha Gupta   |              1 |           1 |
+|         5 | Dr. Karan Joshi  |              1 |           1 |
+|         6 | Dr. Meera Kapoor |              1 |           1 |
++-----------+------------------+----------------+-------------+
+
+mysql> SELECT
+    ->     Revenue_Month,
+    ->     Monthly_Revenue,
+    ->     SUM(Monthly_Revenue) OVER (
+    ->         ORDER BY Revenue_Month
+    ->     ) AS Cumulative_Revenue
+    -> FROM (
+    ->     SELECT
+    ->         DATE_FORMAT(Payment_Date, '%Y-%m') AS Revenue_Month,
+    ->         SUM(Amount) AS Monthly_Revenue
+    ->     FROM billing
+    ->     GROUP BY DATE_FORMAT(Payment_Date, '%Y-%m')
+    -> ) AS Monthly_Data
+    -> ORDER BY Revenue_Month;
++---------------+-----------------+--------------------+
+| Revenue_Month | Monthly_Revenue | Cumulative_Revenue |
++---------------+-----------------+--------------------+
+| NULL          |         1300.00 |            1300.00 |
+| 2026-10       |         2050.00 |            3350.00 |
++---------------+-----------------+--------------------+
+
+mysql> SELECT
+    ->     Appointment_id,
+    ->     Patient_id,
+    ->     Doctor_ID,
+    ->     Appointment_date,
+    ->     COUNT(*) OVER (
+    ->         ORDER BY Appointment_date, Appointment_id
+    ->     ) AS Running_Total
+    -> FROM appointments
+    -> ORDER BY Appointment_date, Appointment_id;
++----------------+------------+-----------+------------------+---------------+
+| Appointment_id | Patient_id | Doctor_ID | Appointment_date | Running_Total |
++----------------+------------+-----------+------------------+---------------+
+|              1 |          1 |         1 | 2026-10-20       |             1 |
+|              2 |          2 |         2 | 2026-10-21       |             2 |
+|              3 |          3 |         3 | 2026-10-22       |             3 |
+|              4 |          4 |         4 | 2026-10-23       |             4 |
+|              5 |          5 |         5 | 2026-10-24       |             5 |
+|              6 |          6 |         6 | 2026-10-25       |             6 |
++----------------+------------+-----------+------------------+---------------+
+
+mysql> SELECT
+    ->     p.Patients_id,
+    ->     p.Name,
+    ->     COUNT(m.Patient_ID) AS Total_Medical_Records,
+    ->     CASE
+    ->         WHEN COUNT(m.Patient_ID) > 5 THEN 'High'
+    ->         WHEN COUNT(m.Patient_ID) BETWEEN 3 AND 5 THEN 'Medium'
+    ->         ELSE 'Low'
+    ->     END AS Patient_Risk_Level
+    -> FROM patient p
+    -> LEFT JOIN medical_records m
+    ->     ON p.Patients_id = m.Patient_ID
+    -> GROUP BY p.Patients_id, p.Name;
++-------------+----------------+-----------------------+--------------------+
+| Patients_id | Name           | Total_Medical_Records | Patient_Risk_Level |
++-------------+----------------+-----------------------+--------------------+
+|           1 | Rahul Sharma   |                     1 | Low                |
+|           2 | Priya Singh    |                     1 | Low                |
+|           3 | Amit Kumar     |                     1 | Low                |
+|           4 | Sneha Patel    |                     1 | Low                |
+|           5 | Arjun Verma    |                     1 | Low                |
+|           6 | Rohan Malhotra |                     0 | Low                |
++-------------+----------------+-----------------------+--------------------+
+
+mysql> ALTER TABLE doctors
+    -> ADD COLUMN Years_of_Experience INT;
+
+mysql> SELECT
+    ->     Doctor_ID,
+    ->     Name,
+    ->     Years_of_Experience,
+    ->     CASE
+    ->         WHEN Years_of_Experience > 15 THEN 'Senior'
+    ->         WHEN Years_of_Experience BETWEEN 5 AND 15 THEN 'Mid-Level'
+    ->         ELSE 'Junior'
+    ->     END AS Doctor_Category
+    -> FROM doctors;
++-----------+------------------+---------------------+-----------------+
+| Doctor_ID | Name             | Years_of_Experience | Doctor_Category |
++-----------+------------------+---------------------+-----------------+
+|         1 | Dr. Raj Mehta    |                NULL | Junior          |
+|         2 | Dr. Anjali Rao   |                NULL | Junior          |
+|         3 | Dr. Vikram Shah  |                NULL | Junior          |
+|         4 | Dr. Neha Gupta   |                NULL | Junior          |
+|         5 | Dr. Karan Joshi  |                NULL | Junior          |
+|         6 | Dr. Meera Kapoor |                NULL | Junior          |
++-----------+------------------+---------------------+-----------------+
+
+
+
+
+
